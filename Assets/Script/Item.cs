@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+
 public class Item : MonoBehaviour
 {
     public Image FillImage;
@@ -9,15 +10,27 @@ public class Item : MonoBehaviour
     float PaintSpeed;
     public ParticleSystem attackEffect;
     public GameObject SE;
-    void Start()
-    {
-        PaintSpeed = activeTimer;
-    }
-    //オブジェクト有効時
+    TeamType Team;
+    Color blueTeamColor, redTeamColor;
+    TeamType MyTeam(GameObject obj) =>
+      obj.CompareTag("RedTeam") ? TeamType.Red :
+      obj.CompareTag("BlueTeam") ? TeamType.Blue :
+      TeamType.None;
     void OnEnable()
     {
+        PaintSpeed = activeTimer;
+        SetSliderColor();
         StartCoroutine(PerformAttack());
     }
+    void SetSliderColor()
+    {
+        FillImage = GameObject.Find("FillImage").GetComponent<Image>();
+        if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
+        if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
+        FillImage.color = Team == TeamType.Blue ? blueTeamColor : redTeamColor;
+    }
+    //オブジェクト有効時
+
     IEnumerator PerformAttack()
     {                       
         //タイマーが終わるまでは処理をしない
@@ -32,14 +45,10 @@ public class Item : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             Character target = hitCollider.GetComponent<Character>();
-
+            TeamType enemyTeam = MyTeam(target.gameObject);
             // 敵であり、かつ味方でない場合にのみダメージを与える
-            if (target != null && target.gameObject.tag != this.gameObject.tag)
-            {
-                target.ItemDamage(target, damage);
-            }
+            if (target != null && enemyTeam != Team)target.ItemDamage(target, damage);
         }
-
         Instantiate(attackEffect, transform.position, Quaternion.identity);
         Instantiate(SE, transform.position, Quaternion.identity);
         Destroy(gameObject);

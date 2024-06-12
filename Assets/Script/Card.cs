@@ -11,11 +11,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     Collider summoningCollider;
     HorizontalLayoutGroup horizontalLayoutGroup;
     public GameObject objectToSummon;
-    public int CardCost;
+    int CardCost;
     Cost cost;
 
     void Start()
     {
+        Character character = objectToSummon.GetComponent<Character>();
+        CardCost = character.state.CharaCost;
         imageTransform = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasRectTransform = canvas.GetComponent<RectTransform>();
@@ -72,6 +74,5 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         worldPosition.y = summoningCollider.bounds.center.y;
         Bounds bounds = summoningCollider.bounds;
         return bounds.Contains(worldPosition);
-
     }
 }

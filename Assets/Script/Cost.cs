@@ -14,13 +14,14 @@ public class Cost : MonoBehaviour
     void FixedUpdate()
     {
         timer -= Time.deltaTime;
-        UpdateCostUI(); // コストが変更されたらUIを更新
+        UpdateCostUI(); 
         if (timer <= 0)
         {
             cost = Mathf.Min(cost + 1, 10); 
             timer = DefaultTime;
         }
     }
+    // コストが変更されたらUIを更新
     public void UpdateCostUI()
     {
         if (tmp != null) tmp.SetText(cost.ToString());

@@ -30,19 +30,14 @@ public class SummoningArea : MonoBehaviour
         // プレハブを指定の位置と回転で生成
         GameObject summonedObject = Instantiate(objectToSummon, dropPosition, summonRotation);
         Character[] chara = summonedObject.GetComponentsInChildren<Character>();
-        Item item = summonedObject.GetComponent<Item>(); 
-
-        //スライダー用調整カラー
-        if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
-        if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
-
-
+        Item item = summonedObject.GetComponent<Item>();
         //スライダーカラー/アイテムのチーム設定
         Color teamColor = isEnemy ? blueTeamColor : redTeamColor;
         if (item != null)
         {
             item.FillImage.color = teamColor;
             item.gameObject.tag = isEnemy ? "BlueTeam" : "RedTeam";
+            Quaternion.Euler(0, 0, 0);
         }
 
         //isEnemy ? = if(isEnemy != true):else

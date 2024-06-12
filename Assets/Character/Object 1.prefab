@@ -605,23 +605,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48afd9b96b6b6f046b73d1a38989609d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MAXHP: 50
-  Power: 10
-  Defense: 0
-  bgmPartIndex: 2
-  Speed: 10
-  Range: 20
-  attackAngle: 0
-  projectileSpeed: 100
-  AttackDelay: 2.5
-  attackEffect: {fileID: 8525990746615576122, guid: b85d21f3b8fed714bacf0c4fd50fa512, type: 3}
-  type: 0
-  projectilePrefab: {fileID: 3388524307670474034, guid: 0abefbd99b9b7504495b397e682f54b8, type: 3}
+  state:
+    MAXHP: 0
+    Power: 0
+    Defense: 0
+    Speed: 0
+    Range: 0
+    attackAngle: 0
+    projectileSpeed: 0
+    CharaCost: 0
+    BGMPartIndex: 0
+    AttackDelay: 0
+  ID: 2
+  type: 2
+  ProjectilePrefab: {fileID: 3388524307670474034, guid: 0abefbd99b9b7504495b397e682f54b8, type: 3}
   isStationary: 0
   isCastle: 0
-  isAttacking: 0
   TutorialStop: 0
-  slider: {fileID: 0}
+  enemyCastle: {fileID: 0}
 --- !u!95 &-3629697829373561340
 Animator:
   serializedVersion: 5

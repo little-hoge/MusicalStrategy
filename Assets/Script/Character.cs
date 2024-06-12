@@ -2,94 +2,85 @@
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Linq;
-using System.Threading;
 using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
-public enum TeamType { None, Red, Blue }    // チーム（タグで判断）
-public enum AttackType { only, wide, ranged }   // 攻撃タイプ
+
+public enum TeamType { None, Red, Blue }
+public enum AttackType { only, wide, ranged }
+
 public class Character : MonoBehaviour
 {
-    public int MAXHP, Power, Defense = 0, bgmPartIndex, Speed, Range, attackAngle, projectileSpeed;
+    MusicalCharacters Data;
+    [HideInInspector] public CharacterStates state;
+    public int ID;  // 選択するキャラクターのインデックス
     int HP;
-    public float AttackDelay;
-    float DelayTimer, waitTimer = 1f;
-    public ParticleSystem attackEffect;
     public AttackType type;
-    public GameObject projectilePrefab;     // 投擲物
+    ParticleSystem attackEffect;
+    public GameObject ProjectilePrefab;
+
+    float WaitTimer = 1f,DelayTimer;
     public bool isStationary, isCastle;
-    [HideInInspector] public bool isAttacking, TutorialStop;
-    SphereCollider RangeCollider;           // 索敵範囲
+    [HideInInspector] public bool TutorialStop;
+    SphereCollider  RangeCollider;
     TeamType Team;
     Rigidbody rb;
     Animator anim;
-    [HideInInspector] public Slider slider;
+    Slider slider;
     Image fillImage;
     Color blueTeamColor, redTeamColor;
-    GameObject enemyCastle, myCastle;
-    bool Detected;
-    TeamType MyTeam(GameObject obj)
-    {
-        if (obj.CompareTag("RedTeam")) return TeamType.Red; // RedTeamの場合はRedを返す
-        else if (obj.CompareTag("BlueTeam")) return TeamType.Blue; // BlueTeamの場合はBlueを返す
-        else return TeamType.None; // 上記の条件に該当しない場合はNoneを返す
-    }
-    // チームによってスライダーの色を変える
+    [HideInInspector] public GameObject enemyCastle;
+    bool isAttacking, Detected;
+    TutorialManager Tutorial;
+    TeamType MyTeam(GameObject obj) =>
+        obj.CompareTag("RedTeam") ? TeamType.Red :
+        obj.CompareTag("BlueTeam") ? TeamType.Blue :
+        TeamType.None;
+
     void SetSliderColor()
     {
-        // Fill 部分の Image コンポーネントを取得
-        Image fillImage = slider.fillRect.GetComponent<Image>();
-
-        //カラーコードをカラーに変換（一度ifを挟む必要あり？）
-        if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
+        fillImage = slider.fillRect.GetComponent<Image>();
+         if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
         if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
-
-        // チームタグに応じて色を設定
-        fillImage.color = Team == TeamType.Blue ? blueTeamColor : redTeamColor;
+     fillImage.color = Team == TeamType.Blue ? blueTeamColor : redTeamColor;
     }
     void Awake()
     {
         if (isCastle) isStationary = true;
-        HP = MAXHP;
         RangeCollider = GetComponent<SphereCollider>();
         anim = GetComponent<Animator>();
+        Data = Resources.Load<MusicalCharacters>("ScriptableObjects/CharaStates");   
     }
-
     void Start()
     {
+        state = Data.States[ID];
+        HP = state.MAXHP;
+        DelayTimer = state.AttackDelay;
         slider = GetComponentInChildren<Slider>();
         Team = MyTeam(gameObject);
         if (!isCastle) rb = GetComponent<Rigidbody>();
-
-        // キャラクターが召喚されたときにBGMパートをアクティブにする
         BGMController.instance.RegisterCharacter(this);
-        DelayTimer = AttackDelay;
-        slider.maxValue = MAXHP;
         slider.value = HP;
         SetSliderColor();
+        Tutorial = FindObjectOfType<TutorialManager>();
 
-        // isCastle フラグが true のキャラクターのみを対象にする
-        Character[] castleCharacters = FindObjectsOfType<Character>().Where(character => character.isCastle).ToArray();
-
-        foreach (Character castleCharacter in castleCharacters)
+        var castleCharacters = FindObjectsOfType<Character>().Where(character => character.isCastle);
+        foreach (var castleCharacter in castleCharacters)
         {
             if (castleCharacter.Team != Team) enemyCastle = castleCharacter.gameObject;
-            else myCastle = castleCharacter.gameObject;
         }
-
     }
+
     void Update()
     {
-        if (TutorialStop) return;       
-        waitTimer -= Time.deltaTime;
-        while (waitTimer > 0) return;
+        if (TutorialStop) return;
+        WaitTimer -= Time.deltaTime;
+        while (WaitTimer > 0) return;
         if (!isStationary && enemyCastle != null && !isAttacking)
         {
             Vector3 direction = (enemyCastle.transform.position - transform.position).normalized;
-            direction.y = 0; 
+            direction.y = 0;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.DORotateQuaternion(lookRotation, 3f);
-            rb.MovePosition(transform.position + direction * Speed *Time.deltaTime);
+            rb.MovePosition(transform.position + direction * state.Speed * Time.deltaTime);
         }
         if (Detected) DetectAndAttackEnemy();
     }
@@ -107,72 +98,49 @@ public class Character : MonoBehaviour
             }
         }
     }
-    //敵察知時の動き
     void DetectAndAttackEnemy()
     {
-        Transform localEnemy = null;
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Range);
-        foreach (Collider collider in hitColliders) 
-        {
-            if (!collider.CompareTag("Untagged")&& collider.gameObject.tag != gameObject.tag)
-            {
-                localEnemy = collider.transform;
-            }
-        }
+        var localEnemy = Physics.OverlapSphere(transform.position,  state.Range)
+                            .Select(collider => collider.GetComponent<Character>())
+                            .FirstOrDefault(chara => chara != null && MyTeam(chara.gameObject) != Team);
         if (localEnemy != null)
         {
-            float distance = Vector3.Distance(transform.position, localEnemy.position);
-            // 攻撃範囲内にいるかをRaycastで判定
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, localEnemy.position - transform.position, out hit))
+            var distance = Vector3.Distance(transform.position, localEnemy.transform.position);
+            if (distance <=  state.Range)
             {
-                Character target = hit.collider.GetComponent<Character>();
-                if (target == localEnemy.GetComponent<Character>())
+                isAttacking = true;
+                 state.AttackDelay -= Time.deltaTime;
+                if (state.AttackDelay <= 0)
                 {
-                    // 攻撃範囲内にいる場合
-                    if (distance <= Range)
-                    {
-                        isAttacking = true;
-                        AttackDelay -= Time.deltaTime;
-                        if (AttackDelay <= 0)
-                        {
-                            AttackIfInRange(target);
-                            AttackDelay = DelayTimer;
-                        }
-                        return;
-                    }
+                    AttackIfInRange(localEnemy);
+                     state.AttackDelay = DelayTimer;
                 }
             }
-            // 動かない場合は無視
-            if (!isStationary)
+            else if (!isStationary)
             {
-                // 攻撃範囲外にいる場合の処理
-                Vector3 direction = (localEnemy.position - transform.position).normalized;
+                var direction = (localEnemy.transform.position - transform.position).normalized;
                 direction.y = 0;
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                transform.DORotateQuaternion(lookRotation, 3f);
+                transform.DORotateQuaternion(Quaternion.LookRotation(direction), 3f);
             }
-        }                 
+        }
         else
         {
             Detected = false;
             isAttacking = false;
         }
     }
-    //敵察知時の動き
+
     void AttackIfInRange(Character target)
     {
-        Debug.Log(gameObject.name + "_Attack");
         if (target == null) return;
         anim.SetTrigger("isAttack");
-        // キャラクターの位置からY軸をずらす（仮）
-        Vector3 effectPosition = target.transform.position + new Vector3(0, 2.5f, 0);
-        Instantiate(attackEffect, effectPosition, Quaternion.identity);     
-        // 攻撃タイプに応じた処理
+        var effectPosition = target.transform.position + new Vector3(0, 2.5f, 0);
+        Instantiate( attackEffect, effectPosition, Quaternion.identity);
+
         switch (type)
         {
             case AttackType.only:
-                Damage(target, target.bgmPartIndex);
+                Damage(target);
                 break;
             case AttackType.wide:
                 PerformWideAttack();
@@ -183,93 +151,87 @@ public class Character : MonoBehaviour
         }
         isAttacking = false;
     }
-    // 眼の前の敵を複数体　角度+レンジで攻撃
+
     void PerformWideAttack()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, Range);
+        var hitColliders = Physics.OverlapSphere(transform.position,  state.Range);
         foreach (var hitCollider in hitColliders)
         {
-            Character target = hitCollider.GetComponent<Character>();
+            var target = hitCollider.GetComponent<Character>();
             if (target != null && MyTeam(target.gameObject) != Team)
             {
-                // キャラクターの前方方向と敵の方向との間の角度を計算
-                Vector3 directionToTarget = (target.transform.position - transform.position).normalized;
-                // 角度が指定された範囲内にある場合に攻撃
-                float angle = Vector3.Angle(transform.forward, directionToTarget);
-                if (angle <= attackAngle) Damage(target, target.bgmPartIndex);
+                var directionToTarget = (target.transform.position - transform.position).normalized;
+                var angle = Vector3.Angle(transform.forward, directionToTarget);
+                if (angle <=  state.attackAngle) Damage(target);
             }
         }
     }
-    //遠距離攻撃の場合
+
     void PerformRangedAttack(Character target)
     {
-        if (projectilePrefab != null)
+        var spawnPosition = transform.position + Vector3.forward * 1.5f;
+        var projectile = Instantiate(ProjectilePrefab, spawnPosition, Quaternion.identity);
+        projectile.transform.LookAt(target.transform);
+        projectile.transform.DOMove(target.transform.position, state.projectileSpeed).SetEase(Ease.Linear).OnComplete(() =>
         {
-            Vector3 spawnPosition = transform.position + Vector3.forward * 1.5f;
-            GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
-            projectile.transform.LookAt(target.transform);
-
-            // DOTweenを使用して投擲物を敵に向かって移動させる
-            projectile.transform.DOMove(target.transform.position, projectileSpeed).SetEase(Ease.Linear).OnComplete(() =>
-            {
-                // ダメージ処理を実行
-                Damage(target, target.bgmPartIndex);
-                Destroy(projectile);
-            });
-        }
+            Damage(target);
+            Destroy(projectile);
+        });
     }
-    void Damage(Character target, int bgmPartIndex)
+    
+    void Damage(Character target)
     {
-        target.HP -= Mathf.Max(0, Power - target.Defense);
+        target.HP -= Mathf.Max(0, state.Power - target.state.Defense);
         target.slider.value = target.HP;
         if (target.HP <= 0)
         {
-            // 城が破壊された場合の勝利処理
-            if (target.isCastle == true) Debug.Log(Team + " Win");
+            if (target.isCastle)
+            {
+                if (Tutorial != null) Tutorial.CharacterDefeated(target);
+                Debug.Log(Team + " Win");
+            }
             Destroy(target.gameObject);
             BGMController.instance.UnregisterCharacter(target);
+
         }
-        // 自分が城でありHPが0になった場合の敗北処理
-        if (this.HP <= 0 && isCastle == true) Debug.Log(Team + " Lose");
+        if (HP <= 0 && isCastle)
+        {
+            if (Tutorial != null) Tutorial.CharacterDefeated(target);
+            Debug.Log(Team + " Lose");
+        }
     }
-    //アイテムでダメージを負った場合
+
     public void ItemDamage(Character target, float damage)
     {
-        target.HP -= Mathf.Max(0, (int)damage - Defense);
+        target.HP -= Mathf.Max(0, (int)damage - state.Defense);
         target.slider.value = HP;
-
         if (target.HP <= 0)
         {
             if (target.isCastle) Debug.Log(Team + " Win");
-
             Destroy(target.gameObject);
-            BGMController.instance.SetBGMPartActive(target.bgmPartIndex, false);
+            BGMController.instance.UnregisterCharacter(target);
         }
-
-        if (this.HP <= 0 && isCastle) Debug.Log(Team + " Lose");
+        if (HP <= 0 && isCastle) Debug.Log(Team + " Lose");
     }
-    //コライダーの可視化
+
     void OnDrawGizmos()
     {
-        // 現在の索敵範囲を可視化
-        RangeCollider = GetComponent<SphereCollider>();
-        Gizmos.color = Color.green;
-
-        // スケールを考慮した半径の計算
-        float scaledRadius = RangeCollider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
-        Gizmos.DrawWireSphere(transform.position, scaledRadius);
-
-        // 攻撃範囲を可視化
-        Gizmos.color = Color.red;
-        float scaledAttackRange = Range * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
-        Gizmos.DrawWireSphere(transform.position, Range);
-
-        // 攻撃角度+範囲を可視化
+        if (RangeCollider != null)
+        {
+            Gizmos.color = Color.green;
+            float scaledRadius = RangeCollider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+            Gizmos.DrawWireSphere(transform.position, scaledRadius);
+        }
+        if(state.Range > 0)
+        { 
+            Gizmos.color = Color.red;
+            float scaledAttackRange =  state.Range * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+            Gizmos.DrawWireSphere(transform.position,  state.Range);
+        }
         if (type == AttackType.wide)
         {
-            Vector3 leftBoundary = Quaternion.Euler(0, -attackAngle, 0) * transform.forward * Range;
-            Vector3 rightBoundary = Quaternion.Euler(0, attackAngle, 0) * transform.forward * Range;
-
+            Vector3 leftBoundary = Quaternion.Euler(0, - state.attackAngle, 0) * transform.forward *  state.Range;
+            Vector3 rightBoundary = Quaternion.Euler(0,  state.attackAngle, 0) * transform.forward *  state.Range;
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(transform.position, transform.position + leftBoundary);
             Gizmos.DrawLine(transform.position, transform.position + rightBoundary);

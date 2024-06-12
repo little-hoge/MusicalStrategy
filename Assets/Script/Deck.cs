@@ -2,13 +2,12 @@
 using UnityEngine;
 public class Deck : MonoBehaviour
 {
-    public List<GameObject> cardPool, handCards, tutorialDeck;
+    public List<GameObject> cardPool, handCards;
     public Transform parentObject;
     public bool tutorialMode;
     void Start()
     { 
-        if (tutorialMode) foreach (var card in tutorialDeck) TutorialDraw(card);
-        else for (int i = 0; i < 5; i++) DrawCard();
+        for (int i = 0; i < 5; i++) DrawCard();
     }
     void Update()
     {
@@ -26,10 +25,5 @@ public class Deck : MonoBehaviour
         GameObject drawnCard = Instantiate(cardPool[randomIndex], parentObject);
         handCards.Add(drawnCard);
 
-    }
-    public void TutorialDraw(GameObject card)
-    {
-        GameObject drawnCard = Instantiate(card, parentObject);
-        handCards.Add(drawnCard);
     }
 }
