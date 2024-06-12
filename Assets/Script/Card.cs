@@ -13,11 +13,16 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public GameObject objectToSummon;
     int CardCost;
     Cost cost;
-
-    void Start()
+    void Awake()
     {
         Character character = objectToSummon.GetComponent<Character>();
-        CardCost = character.state.CharaCost;
+        Item item = objectToSummon.GetComponent<Item>();
+        if (character != null) CardCost = character.state.CharaCost;
+        else CardCost = item.Cost;
+    }
+    void Start()
+    {
+
         imageTransform = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasRectTransform = canvas.GetComponent<RectTransform>();

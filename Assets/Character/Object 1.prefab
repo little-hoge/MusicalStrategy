@@ -618,6 +618,7 @@ MonoBehaviour:
     AttackDelay: 0
   ID: 2
   type: 2
+  attackEffect: {fileID: 19800000, guid: f06e78284f831ae469c74624ab5d513b, type: 3}
   ProjectilePrefab: {fileID: 3388524307670474034, guid: 0abefbd99b9b7504495b397e682f54b8, type: 3}
   isStationary: 0
   isCastle: 0

@@ -14,7 +14,7 @@ public class Character : MonoBehaviour
     public int ID;  // 選択するキャラクターのインデックス
     int HP;
     public AttackType type;
-    ParticleSystem attackEffect;
+    public ParticleSystem attackEffect;
     public GameObject ProjectilePrefab;
 
     float WaitTimer = 1f,DelayTimer;
@@ -34,7 +34,6 @@ public class Character : MonoBehaviour
         obj.CompareTag("RedTeam") ? TeamType.Red :
         obj.CompareTag("BlueTeam") ? TeamType.Blue :
         TeamType.None;
-
     void SetSliderColor()
     {
         fillImage = slider.fillRect.GetComponent<Image>();
@@ -46,22 +45,21 @@ public class Character : MonoBehaviour
     {
         if (isCastle) isStationary = true;
         RangeCollider = GetComponent<SphereCollider>();
-        anim = GetComponent<Animator>();
-        Data = Resources.Load<MusicalCharacters>("ScriptableObjects/CharaStates");   
+        anim = GetComponent<Animator>(); 
     }
     void Start()
     {
+        Data = Resources.Load<MusicalCharacters>("ScriptableObjects/MusicalCharacters");
+        if (!isCastle) rb = GetComponent<Rigidbody>();
+        BGMController.instance.RegisterCharacter(this);
+        slider = GetComponentInChildren<Slider>();
+        Tutorial = FindObjectOfType<TutorialManager>();
         state = Data.States[ID];
         HP = state.MAXHP;
         DelayTimer = state.AttackDelay;
-        slider = GetComponentInChildren<Slider>();
         Team = MyTeam(gameObject);
-        if (!isCastle) rb = GetComponent<Rigidbody>();
-        BGMController.instance.RegisterCharacter(this);
         slider.value = HP;
         SetSliderColor();
-        Tutorial = FindObjectOfType<TutorialManager>();
-
         var castleCharacters = FindObjectsOfType<Character>().Where(character => character.isCastle);
         foreach (var castleCharacter in castleCharacters)
         {
@@ -100,20 +98,21 @@ public class Character : MonoBehaviour
     }
     void DetectAndAttackEnemy()
     {
-        var localEnemy = Physics.OverlapSphere(transform.position,  state.Range)
+        var localEnemy = Physics.OverlapSphere(transform.position, state.Range)
                             .Select(collider => collider.GetComponent<Character>())
                             .FirstOrDefault(chara => chara != null && MyTeam(chara.gameObject) != Team);
+
         if (localEnemy != null)
         {
             var distance = Vector3.Distance(transform.position, localEnemy.transform.position);
-            if (distance <=  state.Range)
+            if (distance <= state.Range)
             {
                 isAttacking = true;
-                 state.AttackDelay -= Time.deltaTime;
+                state.AttackDelay -= Time.deltaTime;
                 if (state.AttackDelay <= 0)
                 {
                     AttackIfInRange(localEnemy);
-                     state.AttackDelay = DelayTimer;
+                    state.AttackDelay = DelayTimer;
                 }
             }
             else if (!isStationary)
@@ -129,14 +128,12 @@ public class Character : MonoBehaviour
             isAttacking = false;
         }
     }
-
     void AttackIfInRange(Character target)
     {
         if (target == null) return;
         anim.SetTrigger("isAttack");
         var effectPosition = target.transform.position + new Vector3(0, 2.5f, 0);
-        Instantiate( attackEffect, effectPosition, Quaternion.identity);
-
+        Instantiate(attackEffect, effectPosition, Quaternion.identity);
         switch (type)
         {
             case AttackType.only:
@@ -151,7 +148,6 @@ public class Character : MonoBehaviour
         }
         isAttacking = false;
     }
-
     void PerformWideAttack()
     {
         var hitColliders = Physics.OverlapSphere(transform.position,  state.Range);
@@ -166,7 +162,6 @@ public class Character : MonoBehaviour
             }
         }
     }
-
     void PerformRangedAttack(Character target)
     {
         var spawnPosition = transform.position + Vector3.forward * 1.5f;
@@ -177,8 +172,7 @@ public class Character : MonoBehaviour
             Damage(target);
             Destroy(projectile);
         });
-    }
-    
+    }  
     void Damage(Character target)
     {
         target.HP -= Mathf.Max(0, state.Power - target.state.Defense);
@@ -200,7 +194,6 @@ public class Character : MonoBehaviour
             Debug.Log(Team + " Lose");
         }
     }
-
     public void ItemDamage(Character target, float damage)
     {
         target.HP -= Mathf.Max(0, (int)damage - state.Defense);
@@ -213,7 +206,6 @@ public class Character : MonoBehaviour
         }
         if (HP <= 0 && isCastle) Debug.Log(Team + " Lose");
     }
-
     void OnDrawGizmos()
     {
         if (RangeCollider != null)

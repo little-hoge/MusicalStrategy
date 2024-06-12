@@ -89,8 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fc22fa9d51c9f24da6129bfd3e0cdbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectToSummon: {fileID: 3453702512031414645, guid: a4202cb59ff1be94890d6967a77b6296, type: 3}
-  CardCost: 3
+  objectToSummon: {fileID: 8900469931095677034, guid: a4202cb59ff1be94890d6967a77b6296, type: 3}
 --- !u!114 &256026598789383700
 MonoBehaviour:
   m_ObjectHideFlags: 0

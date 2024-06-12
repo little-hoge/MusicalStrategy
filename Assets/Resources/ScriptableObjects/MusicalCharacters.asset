@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: MusicalCharacters
   m_EditorClassIdentifier: 
   States:
-  - ID: 0
-    MAXHP: 1000
+  - MAXHP: 1000
     Power: 10
     Defense: 0
     Speed: 0
@@ -24,30 +23,27 @@ MonoBehaviour:
     CharaCost: 0
     BGMPartIndex: 0
     AttackDelay: 2
-  - ID: 0
-    MAXHP: 200
+  - MAXHP: 200
     Power: 20
     Defense: 0
     Speed: 12
-    Range: 20
+    Range: 5
     attackAngle: 0
     projectileSpeed: 0
     CharaCost: 3
     BGMPartIndex: 1
     AttackDelay: 2
-  - ID: 0
-    MAXHP: 100
+  - MAXHP: 100
     Power: 10
     Defense: 0
     Speed: 10
-    Range: 5
+    Range: 10
     attackAngle: 0
     projectileSpeed: 10
     CharaCost: 3
     BGMPartIndex: 2
     AttackDelay: 2
-  - ID: 0
-    MAXHP: 200
+  - MAXHP: 200
     Power: 20
     Defense: 1
     Speed: 10
@@ -57,8 +53,7 @@ MonoBehaviour:
     CharaCost: 3
     BGMPartIndex: 3
     AttackDelay: 4
-  - ID: 0
-    MAXHP: 350
+  - MAXHP: 350
     Power: 10
     Defense: 1
     Speed: 10
@@ -68,8 +63,7 @@ MonoBehaviour:
     CharaCost: 3
     BGMPartIndex: 4
     AttackDelay: 2
-  - ID: 0
-    MAXHP: 20
+  - MAXHP: 20
     Power: 5
     Defense: 0
     Speed: 15

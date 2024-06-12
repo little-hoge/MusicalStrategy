@@ -414,7 +414,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 6
+  m_Radius: 4
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5070534698921504724
 Rigidbody:
@@ -468,6 +468,7 @@ MonoBehaviour:
     AttackDelay: 0
   ID: 4
   type: 0
+  attackEffect: {fileID: 19800000, guid: f06e78284f831ae469c74624ab5d513b, type: 3}
   ProjectilePrefab: {fileID: 0}
   isStationary: 0
   isCastle: 0

@@ -6,19 +6,13 @@ public class SummoningArea : MonoBehaviour
     // 召喚エリアコライダー
     new Collider collider;
     // マテリアルの設定
-    public Material blueTeamMaterial;
-    public Material redTeamMaterial;
-
-    Color blueTeamColor;
-    Color redTeamColor;
-
+    public Material blueTeamMaterial, redTeamMaterial;
     public Flowchart tutorialFlowchart;
     void Start()
     {
         collider = this.GetComponent<Collider>();
         if (collider == null) Debug.LogError("SummoningAreaスクリプトがアタッチされているオブジェクトにColliderがありません。");
     }
-
     public GameObject AttemptSummon(Vector3 dropPosition, GameObject objectToSummon, bool isEnemy)
     {
 
@@ -31,16 +25,11 @@ public class SummoningArea : MonoBehaviour
         GameObject summonedObject = Instantiate(objectToSummon, dropPosition, summonRotation);
         Character[] chara = summonedObject.GetComponentsInChildren<Character>();
         Item item = summonedObject.GetComponent<Item>();
-        //スライダーカラー/アイテムのチーム設定
-        Color teamColor = isEnemy ? blueTeamColor : redTeamColor;
         if (item != null)
         {
-            item.FillImage.color = teamColor;
             item.gameObject.tag = isEnemy ? "BlueTeam" : "RedTeam";
-            Quaternion.Euler(0, 0, 0);
+            item.transform.rotation = Quaternion.identity;
         }
-
-        //isEnemy ? = if(isEnemy != true):else
         foreach (Character charas in chara)
         {      
             // Renderer のマテリアルを設定

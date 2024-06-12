@@ -1038,7 +1038,6 @@ GameObject:
   - component: {fileID: 768957191}
   - component: {fileID: 768957192}
   - component: {fileID: 768957190}
-  - component: {fileID: 768957195}
   - component: {fileID: 768957194}
   - component: {fileID: 768957199}
   - component: {fileID: 768957198}
@@ -1113,6 +1112,7 @@ GameObject:
   - component: {fileID: 768957288}
   - component: {fileID: 768957313}
   - component: {fileID: 768957314}
+  - component: {fileID: 768957315}
   m_Layer: 0
   m_Name: Flowchart
   m_TagString: Untagged
@@ -1165,8 +1165,8 @@ MonoBehaviour:
   - {fileID: 768957116}
   - {fileID: 768957115}
   - {fileID: 768957160}
-  - {fileID: 768957162}
   - {fileID: 768957120}
+  - {fileID: 768957162}
   suppressAllAutoSelections: 0
 --- !u!114 &768957111
 MonoBehaviour:
@@ -1194,8 +1194,7 @@ MonoBehaviour:
     height: 859
   selectedBlocks:
   - {fileID: 768957139}
-  selectedCommands:
-  - {fileID: 768957167}
+  selectedCommands: []
   variables:
   - {fileID: 768957259}
   - {fileID: 768957223}
@@ -1412,7 +1411,7 @@ MonoBehaviour:
   commandList:
   - {fileID: 768957278}
   - {fileID: 768957194}
-  - {fileID: 768957195}
+  - {fileID: 768957315}
   - {fileID: 768957159}
   - {fileID: 768957165}
   - {fileID: 768957262}
@@ -1531,7 +1530,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 385474334}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 1
@@ -1552,7 +1551,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 991607313}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 1
@@ -1976,28 +1975,7 @@ MonoBehaviour:
   indentLevel: 1
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
-  activeState:
-    booleanRef: {fileID: 0}
-    booleanVal: 0
-  targetGameObjectOLD: {fileID: 0}
---- !u!114 &768957195
-MonoBehaviour:
-  m_ObjectHideFlags: 2
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 768957108}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbd8c931f22994b9d90e2037fffaa770, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemId: 84
-  indentLevel: 1
-  _targetGameObject:
-    gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 1666756440}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 0
@@ -5419,7 +5397,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 991607313}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 0
@@ -5467,7 +5445,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 991607313}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 1
@@ -5488,7 +5466,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 1443358013}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 0
@@ -5536,7 +5514,7 @@ MonoBehaviour:
   indentLevel: 0
   _targetGameObject:
     gameObjectRef: {fileID: 0}
-    gameObjectVal: {fileID: 0}
+    gameObjectVal: {fileID: 1443358013}
   activeState:
     booleanRef: {fileID: 0}
     booleanVal: 1
@@ -5990,6 +5968,27 @@ MonoBehaviour:
   stopVoiceover: 1
   waitForVO: 0
   setSayDialog: {fileID: 0}
+--- !u!114 &768957315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 768957108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d81be3d7e84da460788dccea95a3313a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemId: 208
+  indentLevel: 1
+  _targetGameObject:
+    gameObjectRef: {fileID: 0}
+    gameObjectVal: {fileID: 385474334}
+  destroyInXSeconds:
+    floatRef: {fileID: 0}
+    floatVal: 0
+  targetGameObjectOLD: {fileID: 0}
 --- !u!1 &987255477
 GameObject:
   m_ObjectHideFlags: 1
@@ -6341,13 +6340,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44260b57da1dc9a4c8949835e172dd58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyDeck:
-  - {fileID: 4840602181709193079, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
-  - {fileID: 4840602181709193079, guid: ada3264ea7e22b34b8264e3a03fcbf60, type: 3}
-  - {fileID: 4840602181709193079, guid: 21a02c2fb8a63e34db59b09e1774c335, type: 3}
-  - {fileID: 4840602181709193079, guid: 0a7396b622c76834e8dac4e5cbb7d0f1, type: 3}
-  - {fileID: 9056622849536217832, guid: 7c92c809f123c904f99b57ab5e50bc90, type: 3}
-  maxUnitsPerWave: 1
 --- !u!4 &1285868997
 Transform:
   m_ObjectHideFlags: 0
@@ -6776,7 +6768,7 @@ GameObject:
   - component: {fileID: 1666756443}
   - component: {fileID: 1666756442}
   m_Layer: 5
-  m_Name: CardDeck (1)
+  m_Name: CardDeck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

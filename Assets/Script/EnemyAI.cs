@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    public List<GameObject> enemyDeck;  // 敵側のデッキ
-    public int maxUnitsPerWave = 1;     // 1回のウェーブで生成する最大ユニット数
+    CardList enemyDeck;  // 敵側のデッキ
+    int maxUnitsPerWave = 1;     // 1回のウェーブで生成する最大ユニット数
     private SummoningArea enemySummoningArea;
     private Cost enemyCost;             // 敵のコスト管理
     void Awake()
     {
+        enemyDeck = Resources.Load<CardList>("ScriptableObjects/CardList");
+        if (enemyDeck == null)
+        {
+            Debug.LogError("CardList asset could not be found at path: ScriptableObjects/CardList");
+            return;
+        }
         enemySummoningArea = GameObject.Find("SummonArea_Red").GetComponent<SummoningArea>();
         enemyCost = GetComponent<Cost>();
     }
@@ -19,8 +25,11 @@ public class EnemyAI : MonoBehaviour
     }
     void SpawnEnemyUnits()
     {
-        var availableUnits = enemyDeck.Where(unit => unit.GetComponent<Character>().state.CharaCost == enemyCost.cost).ToList();
+        if (enemyDeck == null) return; // enemyDeck が null なら実行しない
+
+        var availableUnits = enemyDeck.Card.Where(unit => unit.GetComponent<Character>().state.CharaCost <= enemyCost.cost).ToList();
         if (availableUnits.Count == 0) return;
+
         int unitsToSpawn = Mathf.Min(availableUnits.Count, maxUnitsPerWave);
         for (int i = 0; i < unitsToSpawn; i++)
         {
@@ -29,17 +38,15 @@ public class EnemyAI : MonoBehaviour
             Character chara = unitToSpawn.GetComponent<Character>();
             if (chara != null && enemyCost.cost >= chara.state.CharaCost)
             {
-                // コストを消費
-                enemyCost.cost -= chara.state.CharaCost;
-                // 召喚位置をランダムに決定
+                enemyCost.cost -= chara.state.CharaCost;               
                 Vector3 spawnPosition = GetRandomPositionInSummoningArea();
-                // ユニットを召喚
                 enemySummoningArea.AttemptSummon(spawnPosition, unitToSpawn, false);
                 // 召喚したユニットをリストから削除
                 availableUnits.RemoveAt(randomIndex);
             }
         }
     }
+    // 召喚位置をランダムに決定
     Vector3 GetRandomPositionInSummoningArea()
     {
         Bounds bounds = enemySummoningArea.GetComponent<Collider>().bounds;
