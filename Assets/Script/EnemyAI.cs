@@ -1,23 +1,16 @@
-﻿/*
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    CardList enemyDeck;  // 敵側のデッキ
-    int maxUnitsPerWave = 1;     // 1回のウェーブで生成する最大ユニット数
+    public GameObject[] enemyDeck; // 敵側のデッキ
+    int maxUnitsPerWave = 1; // 最大ユニット数
     private SummoningArea enemySummoningArea;
-    private Cost enemyCost;             // 敵のコスト管理
+    private Cost enemyCost; // 敵のコスト管理
     void Awake()
     {
-        enemyDeck = Resources.Load<CardList>("ScriptableObjects/CardList");
-        if (enemyDeck == null)
-        {
-            Debug.LogError("CardList asset could not be found at path: ScriptableObjects/CardList");
-            return;
-        }
         enemySummoningArea = GameObject.Find("SummonArea_Red").GetComponent<SummoningArea>();
-        enemyCost = GetComponent<Cost>();
+        enemyCost = this.gameObject.GetComponent<Cost>();
     }
     void FixedUpdate()
     {
@@ -27,18 +20,24 @@ public class EnemyAI : MonoBehaviour
     {
         if (enemyDeck == null) return; // enemyDeck が null なら実行しない
 
-        var availableUnits = enemyDeck.Card.Where(unit => unit.GetComponent<Character>().state.CharaCost <= enemyCost.cost).ToList();
-        if (availableUnits.Count == 0) return;
+        // 利用可能なユニットを取得し、ランダムにシャッフルしてから最大ユニット数分選択する
+        var availableUnits = enemyDeck
+            .Where(unit => unit != null && unit.GetComponent<CharaState>() != null)
+            .Where(unit => unit.GetComponent<CharaState>().Cost <= enemyCost.cost)
+            .OrderBy(unit => Random.value)
+            .Take(maxUnitsPerWave)
+            .ToList();
 
         int unitsToSpawn = Mathf.Min(availableUnits.Count, maxUnitsPerWave);
         for (int i = 0; i < unitsToSpawn; i++)
         {
             int randomIndex = Random.Range(0, availableUnits.Count);
             GameObject unitToSpawn = availableUnits[randomIndex];
-            Character chara = unitToSpawn.GetComponent<Character>();
-            if (chara != null && enemyCost.cost >= chara.state.CharaCost)
+            CharaState chara = unitToSpawn.GetComponent<CharaState>();
+            if (chara != null && enemyCost.cost >= chara.Cost)
             {
-                enemyCost.cost -= chara.state.CharaCost;               
+                Debug.Log("enemyCost_" + enemyCost.cost + "charaCost" + chara.Cost);
+                enemyCost.cost -= chara.Cost;
                 Vector3 spawnPosition = GetRandomPositionInSummoningArea();
                 enemySummoningArea.AttemptSummon(spawnPosition, unitToSpawn, false);
                 // 召喚したユニットをリストから削除
@@ -55,4 +54,3 @@ public class EnemyAI : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 }
-*/

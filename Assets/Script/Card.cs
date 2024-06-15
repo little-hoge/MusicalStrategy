@@ -19,8 +19,6 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         Item item = objectToSummon.GetComponent<Item>();
         if (character != null) CardCost = character.Cost;
         else if (item != null) CardCost = item.Cost;
-        Debug.Log("Object to summon: " + objectToSummon + objectToSummon.gameObject + "_Card cost: " + CardCost);
-
         imageTransform = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
         canvasRectTransform = canvas.GetComponent<RectTransform>();
