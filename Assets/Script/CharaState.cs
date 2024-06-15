@@ -3,7 +3,8 @@
 //テスト用読み込みスクリプト
 public class CharaState : MonoBehaviour
 {
-    public int ID;   
+    public int ID;
+    public int Cost;
     [HideInInspector]public int MAXHP, Power, Defense, Speed, Range, attackAngle, projectileSpeed, CharaCost,BGMPartIndex;
     [HideInInspector] public float AttackDelay;
     void Awake()
@@ -27,7 +28,7 @@ public class CharaState : MonoBehaviour
         Range = charaData.States[ID].Range;
         attackAngle = charaData.States[ID].attackAngle;
         projectileSpeed = charaData.States[ID].projectileSpeed;
-        CharaCost = charaData.States[ID].CharaCost;
+        //CharaCost = charaData.States[ID].CharaCost;
         BGMPartIndex = charaData.States[ID].BGMPartIndex;
         AttackDelay = charaData.States[ID].AttackDelay;
     }

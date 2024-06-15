@@ -457,7 +457,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: {fileID: 0}
-  Cost: 3
   type: 0
   attackEffect: {fileID: 19800000, guid: f06e78284f831ae469c74624ab5d513b, type: 3}
   ProjectilePrefab: {fileID: 0}
@@ -499,6 +498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 4
+  Cost: 3
   MAXHP: 0
   Power: 0
   Defense: 0
@@ -506,6 +506,7 @@ MonoBehaviour:
   Range: 0
   attackAngle: 0
   projectileSpeed: 0
+  CharaCost: 0
   BGMPartIndex: 0
   AttackDelay: 0
 --- !u!1 &5004096685442377296

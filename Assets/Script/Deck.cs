@@ -24,6 +24,5 @@ public class Deck : MonoBehaviour
         int randomIndex = Random.Range(0, MyDeck.Count);
         GameObject drawnCard = Instantiate(MyDeck[randomIndex], parentObject);
         handCards.Add(drawnCard);
-
     }
 }

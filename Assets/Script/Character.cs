@@ -10,7 +10,6 @@ public enum AttackType { only, wide, ranged }
 public class Character : MonoBehaviour
 {
     public CharaState state;
-    public int Cost;
     int HP;
     public AttackType type;
     public ParticleSystem attackEffect;
@@ -42,7 +41,7 @@ public class Character : MonoBehaviour
     }
     public void Awake()
     {
-        state = this.gameObject.GetComponent<CharaState>();
+        state = this.gameObject.GetComponentInParent<CharaState>();
         if (isCastle) isStationary = true;
         RangeCollider = GetComponent<SphereCollider>();
         anim = GetComponent<Animator>(); 

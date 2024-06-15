@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 161533037394321309}
+  - component: {fileID: 1385438066243962}
   m_Layer: 0
   m_Name: Object 4
   m_TagString: Untagged
@@ -34,6 +35,30 @@ Transform:
   - {fileID: 6076834903898965025}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1385438066243962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9056622849536217832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bb34a266e688394f8c3624ca23a6455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 5
+  Cost: 3
+  MAXHP: 0
+  Power: 0
+  Defense: 0
+  Speed: 0
+  Range: 0
+  attackAngle: 0
+  projectileSpeed: 0
+  CharaCost: 0
+  BGMPartIndex: 0
+  AttackDelay: 0
 --- !u!1001 &4244386182708552304
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -126,7 +151,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Object (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2836997357241356031, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -228,7 +254,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Object (2)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2836997357241356031, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -266,10 +293,6 @@ PrefabInstance:
       propertyPath: Speed
       value: 15
       objectReference: {fileID: 0}
-    - target: {fileID: 1263998243307248368, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
-      propertyPath: state
-      value: 
-      objectReference: {fileID: 2506538678579646007}
     - target: {fileID: 1263998243307248368, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
       propertyPath: AttackDelay
       value: 1
@@ -334,22 +357,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Object
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -2836997357241356031, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
---- !u!114 &2506538678579646007 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -2836997357241356031, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}
-  m_PrefabInstance: {fileID: 8820852145628413750}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bb34a266e688394f8c3624ca23a6455, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5672761249669900511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3805616484839888873, guid: 50f8937830d9cf543ba4ab169abbbe60, type: 3}

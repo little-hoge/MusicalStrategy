@@ -15,7 +15,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     Cost cost;
     void Start()
     {
-        Character character = objectToSummon.GetComponent<Character>();
+        CharaState character = objectToSummon.GetComponent<CharaState>();
         Item item = objectToSummon.GetComponent<Item>();
         if (character != null) CardCost = character.Cost;
         else if (item != null) CardCost = item.Cost;
