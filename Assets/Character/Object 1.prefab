@@ -448,6 +448,7 @@ GameObject:
   - component: {fileID: 5070534698921504724}
   - component: {fileID: 1263998243307248368}
   - component: {fileID: -3629697829373561340}
+  - component: {fileID: -2055176397107738385}
   m_Layer: 0
   m_Name: Object 1
   m_TagString: Untagged
@@ -605,18 +606,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48afd9b96b6b6f046b73d1a38989609d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state:
-    MAXHP: 0
-    Power: 0
-    Defense: 0
-    Speed: 0
-    Range: 0
-    attackAngle: 0
-    projectileSpeed: 0
-    CharaCost: 0
-    BGMPartIndex: 0
-    AttackDelay: 0
-  ID: 2
+  state: {fileID: 0}
+  Cost: 3
   type: 2
   attackEffect: {fileID: 19800000, guid: f06e78284f831ae469c74624ab5d513b, type: 3}
   ProjectilePrefab: {fileID: 3388524307670474034, guid: 0abefbd99b9b7504495b397e682f54b8, type: 3}
@@ -645,6 +636,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-2055176397107738385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4840602181709193079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bb34a266e688394f8c3624ca23a6455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID: 2
+  MAXHP: 0
+  Power: 0
+  Defense: 0
+  Speed: 0
+  Range: 0
+  attackAngle: 0
+  projectileSpeed: 0
+  BGMPartIndex: 0
+  AttackDelay: 0
 --- !u!1 &5004096685442377296
 GameObject:
   m_ObjectHideFlags: 0

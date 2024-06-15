@@ -13,15 +13,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public GameObject objectToSummon;
     int CardCost;
     Cost cost;
-    void Awake()
+    void Start()
     {
         Character character = objectToSummon.GetComponent<Character>();
         Item item = objectToSummon.GetComponent<Item>();
-        if (character != null) CardCost = character.state.CharaCost;
-        else CardCost = item.Cost;
-    }
-    void Start()
-    {
+        if (character != null) CardCost = character.Cost;
+        else if (item != null) CardCost = item.Cost;
+        Debug.Log("Object to summon: " + objectToSummon + objectToSummon.gameObject + "_Card cost: " + CardCost);
 
         imageTransform = this.GetComponent<RectTransform>();
         canvas = GetComponentInParent<Canvas>();
@@ -29,13 +27,12 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         horizontalLayoutGroup = GetComponentInParent<HorizontalLayoutGroup>();
 
         cost = canvas.GetComponentInChildren<Cost>();
-        summoningArea =GameObject.Find("SummonArea_Blue").GetComponent<SummoningArea>();
+        summoningArea = GameObject.Find("SummonArea_Blue").GetComponent<SummoningArea>();
         summoningCollider = summoningArea.GetComponent<Collider>();
 
         // 初期位置を保存
         initialPosition = imageTransform.anchoredPosition;
     }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         //HorizontalLayoutGroupを一時的に非表示

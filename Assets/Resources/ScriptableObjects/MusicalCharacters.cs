@@ -4,11 +4,11 @@ using UnityEngine;
 [ExcelAsset]
 public class MusicalCharacters : ScriptableObject
 {
-    public List<CharacterStates> States;
+    public List<StatesEntity> States;
 }
 
 [System.Serializable]
-public class CharacterStates
+public class StatesEntity
 {
     public int MAXHP,Power,Defense,Speed,Range,attackAngle, projectileSpeed, CharaCost, BGMPartIndex;
     public float AttackDelay;

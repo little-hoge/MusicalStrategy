@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*
 using System.Linq;
 using UnityEngine;
 
@@ -55,3 +55,4 @@ public class EnemyAI : MonoBehaviour
         return new Vector3(x, 0, z);
     }
 }
+*/

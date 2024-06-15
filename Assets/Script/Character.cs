@@ -9,9 +9,8 @@ public enum AttackType { only, wide, ranged }
 
 public class Character : MonoBehaviour
 {
-    MusicalCharacters Data;
-    [HideInInspector] public CharacterStates state;
-    public int ID;  // 選択するキャラクターのインデックス
+    public CharaState state;
+    public int Cost;
     int HP;
     public AttackType type;
     public ParticleSystem attackEffect;
@@ -37,24 +36,23 @@ public class Character : MonoBehaviour
     void SetSliderColor()
     {
         fillImage = slider.fillRect.GetComponent<Image>();
-         if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
+        if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
         if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
      fillImage.color = Team == TeamType.Blue ? blueTeamColor : redTeamColor;
     }
-    void Awake()
+    public void Awake()
     {
+        state = this.gameObject.GetComponent<CharaState>();
         if (isCastle) isStationary = true;
         RangeCollider = GetComponent<SphereCollider>();
         anim = GetComponent<Animator>(); 
     }
     void Start()
     {
-        Data = Resources.Load<MusicalCharacters>("ScriptableObjects/MusicalCharacters");
         if (!isCastle) rb = GetComponent<Rigidbody>();
         BGMController.instance.RegisterCharacter(this);
         slider = GetComponentInChildren<Slider>();
         Tutorial = FindObjectOfType<TutorialManager>();
-        state = Data.States[ID];
         HP = state.MAXHP;
         DelayTimer = state.AttackDelay;
         Team = MyTeam(gameObject);

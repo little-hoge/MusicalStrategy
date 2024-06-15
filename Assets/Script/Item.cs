@@ -21,18 +21,20 @@ public class Item : MonoBehaviour
     void OnEnable()
     {
         PaintSpeed = activeTimer;
-        FillImage = GameObject.Find("Fill").GetComponent<Image>();
-        Debug.Log(FillImage);
+        if (FillImage == null) Debug.LogError("FillImageが見つかりませんでした。");
         Team = MyTeam(gameObject);
+    }
+    void Start()
+    {
         SetSliderColor();
         StartCoroutine(PerformAttack());
     }
 
     void SetSliderColor()
-    {       
+    {
         if (!ColorUtility.TryParseHtmlString("#7982FF", out blueTeamColor)) Debug.LogError("ブルーチームのカラーの解析に失敗しました");
         if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
-        FillImage.color = Team == TeamType.Blue ? blueTeamColor : redTeamColor;
+        FillImage.color = Team == TeamType.Blue ? redTeamColor : blueTeamColor;
     }
     //オブジェクト有効時
 

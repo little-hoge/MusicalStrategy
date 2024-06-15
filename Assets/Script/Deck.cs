@@ -2,7 +2,7 @@
 using UnityEngine;
 public class Deck : MonoBehaviour
 {
-    public List<GameObject> cardPool, handCards;
+    public List<GameObject> MyDeck, handCards;
     public Transform parentObject;
     public bool tutorialMode;
     void Start()
@@ -21,8 +21,8 @@ public class Deck : MonoBehaviour
     }
     public void DrawCard()
     {
-        int randomIndex = Random.Range(0, cardPool.Count);
-        GameObject drawnCard = Instantiate(cardPool[randomIndex], parentObject);
+        int randomIndex = Random.Range(0, MyDeck.Count);
+        GameObject drawnCard = Instantiate(MyDeck[randomIndex], parentObject);
         handCards.Add(drawnCard);
 
     }
