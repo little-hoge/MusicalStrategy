@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
+using System.Linq;
 public class Item : MonoBehaviour
 {
     public Image FillImage;
@@ -27,7 +29,7 @@ public class Item : MonoBehaviour
     void Start()
     {
         SetSliderColor();
-        StartCoroutine(PerformAttack());
+        PerformAttack().Forget();
     }
 
     void SetSliderColor()
@@ -38,27 +40,37 @@ public class Item : MonoBehaviour
     }
     //オブジェクト有効時
 
-    IEnumerator PerformAttack()
-    {                       
-        //タイマーが終わるまでは処理をしない
+    async UniTaskVoid PerformAttack()
+    {
+        // タイマーが終了するまで処理をしない
         while (activeTimer >= 0)
         {
             activeTimer -= Time.deltaTime;
             FillImage.fillAmount = activeTimer / PaintSpeed;
-            yield return null;
+            await UniTask.Yield(PlayerLoopTiming.Update);
         }
 
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackCollider.radius);
+        Vector3 scale = transform.lossyScale;
+        float largestScale = Mathf.Max(scale.x, scale.y, scale.z);
+        float scaledRadius = attackCollider.radius * largestScale;
+
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, scaledRadius)
+                                       .Where(collider => collider is BoxCollider)
+                                       .ToArray();
+        Debug.Log(scaledRadius);
+        Debug.Log($"PerformAttack: Number of colliders detected: {hitColliders.Length}");
+
         foreach (var hitCollider in hitColliders)
         {
             Character target = hitCollider.GetComponent<Character>();
-            if(target != null) 
-            { 
-                 TeamType enemyTeam = MyTeam(target.gameObject);
+            if (target != null)
+            {
+                TeamType enemyTeam = MyTeam(target.gameObject);
                 // 敵であり、かつ味方でない場合にのみダメージを与える
-                if (enemyTeam != Team)target.ItemDamage(target, damage);
+                if (enemyTeam != Team) target.ItemDamage(target, damage);
             }
         }
+
         Instantiate(attackEffect, transform.position, Quaternion.identity);
         Instantiate(SE, transform.position, Quaternion.identity);
         Destroy(gameObject);
@@ -66,6 +78,11 @@ public class Item : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackCollider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z));
+        Vector3 scale = transform.lossyScale;
+        // 最大のスケールを計算
+        float largestScale = Mathf.Max(scale.x, scale.y, scale.z);
+        // 攻撃範囲のスケールを適用した半径を計算
+        float scaledRadius = attackCollider.radius * largestScale;
+        Gizmos.DrawWireSphere(transform.position, scaledRadius);
     }
 }

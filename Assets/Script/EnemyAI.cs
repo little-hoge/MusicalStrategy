@@ -36,7 +36,7 @@ public class EnemyAI : MonoBehaviour
             CharaState chara = unitToSpawn.GetComponent<CharaState>();
             if (chara != null && enemyCost.cost >= chara.Cost)
             {
-                Debug.Log("enemyCost_" + enemyCost.cost + "charaCost" + chara.Cost);
+                //Debug.Log("enemyCost_" + enemyCost.cost + "charaCost" + chara.Cost);
                 enemyCost.cost -= chara.Cost;
                 Vector3 spawnPosition = GetRandomPositionInSummoningArea();
                 enemySummoningArea.AttemptSummon(spawnPosition, unitToSpawn, false);

@@ -95,9 +95,11 @@ public class Character : MonoBehaviour
     }
     void DetectAndAttackEnemy()
     {
+        // オーバーラップスフィア内のBoxColliderのみを取得
         var localEnemy = Physics.OverlapSphere(transform.position, state.Range)
-                            .Select(collider => collider.GetComponent<Character>())
-                            .FirstOrDefault(chara => chara != null && MyTeam(chara.gameObject) != Team);
+                                .Where(collider => collider is BoxCollider)
+                                .Select(collider => collider.GetComponent<Character>())
+                                .FirstOrDefault(chara => chara != null && MyTeam(chara.gameObject) != Team);
 
         if (localEnemy != null)
         {
