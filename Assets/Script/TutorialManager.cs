@@ -25,7 +25,7 @@ public class TutorialManager : MonoBehaviour
     // キャラクターの動きを制御するメソッド
     public void SetCharacterMovement(bool canMove)
     {
-        foreach (Character character in characters) character.TutorialStop = !canMove;
+        foreach (Character character in characters) character.MoveStop = !canMove;
     }
     // チュートリアルの特定の段階でキャラクターを動かしたり止めたりする
     public void CharacterMovement()

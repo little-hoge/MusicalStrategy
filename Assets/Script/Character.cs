@@ -14,10 +14,9 @@ public class Character : MonoBehaviour
     public AttackType type;
     public ParticleSystem attackEffect;
     public GameObject ProjectilePrefab;
-
     float WaitTimer = 1f,DelayTimer;
     public bool isStationary, isCastle;
-    [HideInInspector] public bool TutorialStop;
+    [HideInInspector] public bool MoveStop;
     SphereCollider  RangeCollider;
     TeamType Team;
     Rigidbody rb;
@@ -25,9 +24,10 @@ public class Character : MonoBehaviour
     Slider slider;
     Image fillImage;
     Color blueTeamColor, redTeamColor;
-    [HideInInspector] public GameObject enemyCastle;
+    [HideInInspector] public GameObject enemyCastle, TeamCastle;
     bool isAttacking, Detected;
     TutorialManager Tutorial;
+    Main main;
     TeamType MyTeam(GameObject obj) =>
         obj.CompareTag("RedTeam") ? TeamType.Red :
         obj.CompareTag("BlueTeam") ? TeamType.Blue :
@@ -43,14 +43,15 @@ public class Character : MonoBehaviour
     {
         state = this.gameObject.GetComponentInParent<CharaState>();
         if (isCastle) isStationary = true;
-        RangeCollider = GetComponent<SphereCollider>();
-        anim = GetComponent<Animator>(); 
+        RangeCollider = this.GetComponent<SphereCollider>();
+        anim = this.GetComponent<Animator>(); 
     }
     void Start()
     {
-        if (!isCastle) rb = GetComponent<Rigidbody>();
+        main = FindObjectOfType<Main>();
+        if (!isCastle) rb = this.GetComponent<Rigidbody>();
         BGMController.instance.RegisterCharacter(this);
-        slider = GetComponentInChildren<Slider>();
+        slider = this.GetComponentInChildren<Slider>();
         Tutorial = FindObjectOfType<TutorialManager>();
         HP = state.MAXHP;
         DelayTimer = state.AttackDelay;
@@ -61,15 +62,16 @@ public class Character : MonoBehaviour
         foreach (var castleCharacter in castleCharacters)
         {
             if (castleCharacter.Team != Team) enemyCastle = castleCharacter.gameObject;
+            else TeamCastle = castleCharacter.gameObject;
         }
     }
 
     void Update()
     {
-        if (TutorialStop) return;
+        if (MoveStop) return;
         WaitTimer -= Time.deltaTime;
         while (WaitTimer > 0) return;
-        if (!isStationary && enemyCastle != null && !isAttacking)
+        if (!isStationary && enemyCastle != null && TeamCastle!=null && !isAttacking && HP >= 0)
         {
             Vector3 direction = (enemyCastle.transform.position - transform.position).normalized;
             direction.y = 0;
@@ -176,6 +178,7 @@ public class Character : MonoBehaviour
     {
         target.HP -= Mathf.Max(0, state.Power - target.state.Defense);
         target.slider.value = target.HP;
+        Debug.Log(target+ "_slider.value:" + target.slider.value + "_HP:"+ target.HP);
         if (target.HP <= 0)
         {
             if (target.isCastle)
@@ -199,11 +202,11 @@ public class Character : MonoBehaviour
         target.slider.value = HP;
         if (target.HP <= 0)
         {
-            if (target.isCastle) Debug.Log(Team + " Win");
+            if (target.isCastle) main.WinOrLose(true);
             Destroy(target.gameObject);
             BGMController.instance.UnregisterCharacter(target);
         }
-        if (HP <= 0 && isCastle) Debug.Log(Team + " Lose");
+        if (HP <= 0 && isCastle) main.WinOrLose(false);
     }
     void OnDrawGizmos()
     {

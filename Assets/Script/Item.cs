@@ -42,7 +42,7 @@ public class Item : MonoBehaviour
 
     async UniTaskVoid PerformAttack()
     {
-        // タイマーが終了するまで処理をしない
+        // タイマーが終了するまで処理する
         while (activeTimer >= 0)
         {
             activeTimer -= Time.deltaTime;
@@ -50,6 +50,7 @@ public class Item : MonoBehaviour
             await UniTask.Yield(PlayerLoopTiming.Update);
         }
 
+        //オブジェクトの大小に合わせたスケーリング
         Vector3 scale = transform.lossyScale;
         float largestScale = Mathf.Max(scale.x, scale.y, scale.z);
         float scaledRadius = attackCollider.radius * largestScale;
@@ -57,9 +58,6 @@ public class Item : MonoBehaviour
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, scaledRadius)
                                        .Where(collider => collider is BoxCollider)
                                        .ToArray();
-        Debug.Log(scaledRadius);
-        Debug.Log($"PerformAttack: Number of colliders detected: {hitColliders.Length}");
-
         foreach (var hitCollider in hitColliders)
         {
             Character target = hitCollider.GetComponent<Character>();
@@ -79,9 +77,7 @@ public class Item : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Vector3 scale = transform.lossyScale;
-        // 最大のスケールを計算
         float largestScale = Mathf.Max(scale.x, scale.y, scale.z);
-        // 攻撃範囲のスケールを適用した半径を計算
         float scaledRadius = attackCollider.radius * largestScale;
         Gizmos.DrawWireSphere(transform.position, scaledRadius);
     }
