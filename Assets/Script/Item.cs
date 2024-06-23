@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using System.Linq;
 public class Item : MonoBehaviour
 {
     public Image FillImage;
-    public SphereCollider attackCollider;
+    SphereCollider attackCollider;
     public int Cost;
     public float damage, activeTimer;
     float PaintSpeed;
@@ -23,7 +21,7 @@ public class Item : MonoBehaviour
     void OnEnable()
     {
         PaintSpeed = activeTimer;
-        if (FillImage == null) Debug.LogError("FillImageが見つかりませんでした。");
+        attackCollider = this.GetComponent<SphereCollider>();
         Team = MyTeam(gameObject);
     }
     void Start()

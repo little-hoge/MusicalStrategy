@@ -7,14 +7,16 @@ public class EnemyAI : MonoBehaviour
     int maxUnitsPerWave = 1; // 最大ユニット数
     private SummoningArea enemySummoningArea;
     private Cost enemyCost; // 敵のコスト管理
+    Main main;
     void Awake()
     {
+        main = FindObjectOfType<Main>();
         enemySummoningArea = GameObject.Find("SummonArea_Red").GetComponent<SummoningArea>();
         enemyCost = this.gameObject.GetComponent<Cost>();
     }
     void FixedUpdate()
     {
-        SpawnEnemyUnits();
+        if (!main.GameStop) SpawnEnemyUnits();
     }
     void SpawnEnemyUnits()
     {

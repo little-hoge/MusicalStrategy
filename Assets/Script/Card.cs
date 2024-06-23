@@ -13,8 +13,10 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public GameObject objectToSummon;
     int CardCost;
     Cost cost;
+    Main main;
     void Start()
     {
+        main = FindObjectOfType<Main>();
         CharaState character = objectToSummon.GetComponent<CharaState>();
         Item item = objectToSummon.GetComponent<Item>();
         if (character != null) CardCost = character.Cost;
@@ -39,7 +41,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (CardCost <= cost.cost)
+        if (!main.GameStop)
         {
             Vector2 localPointerPosition;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRectTransform, eventData.position, eventData.pressEventCamera, out localPointerPosition))
@@ -51,23 +53,21 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (CardCost <= cost.cost)
-        {
-            Vector3 worldDropPosition;
+        Vector3 worldDropPosition;
 
-            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRectTransform, eventData.position, eventData.pressEventCamera, out worldDropPosition))
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvasRectTransform, eventData.position, eventData.pressEventCamera, out worldDropPosition))
+        {
+            if (IsInsideSummoningArea(worldDropPosition)&& CardCost <= cost.cost)
             {
-                if (IsInsideSummoningArea(worldDropPosition))
-                {
-                    GameObject summonedCharacter = summoningArea.AttemptSummon(worldDropPosition, objectToSummon, true);
-                    Destroy(gameObject);
-                    cost.cost -= CardCost;
-                    cost.UpdateCostUI();
-                }
-                else imageTransform.anchoredPosition = initialPosition;
+                GameObject summonedCharacter = summoningArea.AttemptSummon(worldDropPosition, objectToSummon, true);
+                Destroy(gameObject);
+                cost.cost -= CardCost;
+                cost.UpdateCostUI();
             }
-            horizontalLayoutGroup.enabled = true;
+            else imageTransform.anchoredPosition = initialPosition;
         }
+        horizontalLayoutGroup.enabled = true;
+
     }
     private bool IsInsideSummoningArea(Vector3 worldPosition)
     {

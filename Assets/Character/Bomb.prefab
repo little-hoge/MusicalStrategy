@@ -267,7 +267,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FillImage: {fileID: 8748946167866003863}
-  attackCollider: {fileID: 2445261074001267865}
   Cost: 3
   damage: 100
   activeTimer: 3
@@ -284,7 +283,6 @@ GameObject:
   - component: {fileID: 4068989514239904670}
   - component: {fileID: 4775838032725245129}
   - component: {fileID: 2463575435217525997}
-  - component: {fileID: 4486674885702613308}
   - component: {fileID: 2445261074001267865}
   - component: {fileID: 7130526807283342497}
   m_Layer: 0
@@ -360,27 +358,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &4486674885702613308
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8900469931095677034}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &2445261074001267865
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -400,7 +377,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1.5
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &7130526807283342497
 MonoBehaviour:
@@ -415,7 +392,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FillImage: {fileID: 8748946167866003863}
-  attackCollider: {fileID: 2445261074001267865}
   Cost: 3
   damage: 100
   activeTimer: 3

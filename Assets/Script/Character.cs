@@ -10,7 +10,7 @@ public enum AttackType { only, wide, ranged }
 public class Character : MonoBehaviour
 {
     public CharaState state;
-    int HP;
+    [HideInInspector] public int HP;
     public AttackType type;
     public ParticleSystem attackEffect;
     public GameObject ProjectilePrefab;
@@ -18,7 +18,7 @@ public class Character : MonoBehaviour
     public bool isStationary, isCastle;
     [HideInInspector] public bool MoveStop;
     SphereCollider  RangeCollider;
-    TeamType Team;
+    [HideInInspector] public TeamType Team;
     Rigidbody rb;
     Animator anim;
     Slider slider;
@@ -26,7 +26,6 @@ public class Character : MonoBehaviour
     Color blueTeamColor, redTeamColor;
     [HideInInspector] public GameObject enemyCastle, TeamCastle;
     bool isAttacking, Detected;
-    TutorialManager Tutorial;
     Main main;
     TeamType MyTeam(GameObject obj) =>
         obj.CompareTag("RedTeam") ? TeamType.Red :
@@ -52,11 +51,9 @@ public class Character : MonoBehaviour
         if (!isCastle) rb = this.GetComponent<Rigidbody>();
         BGMController.instance.RegisterCharacter(this);
         slider = this.GetComponentInChildren<Slider>();
-        Tutorial = FindObjectOfType<TutorialManager>();
         HP = state.MAXHP;
         DelayTimer = state.AttackDelay;
         Team = MyTeam(gameObject);
-        slider.value = HP;
         SetSliderColor();
         var castleCharacters = FindObjectsOfType<Character>().Where(character => character.isCastle);
         foreach (var castleCharacter in castleCharacters)
@@ -64,22 +61,30 @@ public class Character : MonoBehaviour
             if (castleCharacter.Team != Team) enemyCastle = castleCharacter.gameObject;
             else TeamCastle = castleCharacter.gameObject;
         }
+        FixUpdateLoop().Forget();
     }
-
-    void Update()
+    async UniTaskVoid FixUpdateLoop()
     {
-        if (MoveStop) return;
-        WaitTimer -= Time.deltaTime;
-        while (WaitTimer > 0) return;
-        if (!isStationary && enemyCastle != null && TeamCastle!=null && !isAttacking && HP >= 0)
+        while (true)
         {
-            Vector3 direction = (enemyCastle.transform.position - transform.position).normalized;
-            direction.y = 0;
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.DORotateQuaternion(lookRotation, 3f);
-            rb.MovePosition(transform.position + direction * state.Speed * Time.deltaTime);
+            await UniTask.Yield(PlayerLoopTiming.FixedUpdate);
+
+            if (MoveStop) continue;
+
+            WaitTimer -= Time.deltaTime;
+            if (WaitTimer > 0) continue;
+
+            if (!isStationary && enemyCastle != null && TeamCastle != null && !isAttacking && HP >= 0)
+            {
+                Vector3 direction = (enemyCastle.transform.position - transform.position).normalized;
+                direction.y = 0;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.DORotateQuaternion(lookRotation, 3f);
+                rb.MovePosition(transform.position + direction * state.Speed * Time.deltaTime);
+            }
+
+            if (Detected) DetectAndAttackEnemy();
         }
-        if (Detected) DetectAndAttackEnemy();
     }
     //索敵範囲
     void OnTriggerStay(Collider other)
@@ -168,45 +173,43 @@ public class Character : MonoBehaviour
         var spawnPosition = transform.position + Vector3.forward * 1.5f;
         var projectile = Instantiate(ProjectilePrefab, spawnPosition, Quaternion.identity);
         projectile.transform.LookAt(target.transform);
-        projectile.transform.DOMove(target.transform.position, state.projectileSpeed).SetEase(Ease.Linear).OnComplete(() =>
+
+        // 投擲物とターゲット位置の計算
+        float distance = Vector3.Distance(spawnPosition, target.transform.position);
+        float moveDuration = distance / state.projectileSpeed;
+
+        projectile.transform.DOMove(target.transform.position, moveDuration).SetEase(Ease.Linear).OnComplete(() =>
         {
             Damage(target);
             Destroy(projectile);
         });
-    }  
+    }
     void Damage(Character target)
     {
         target.HP -= Mathf.Max(0, state.Power - target.state.Defense);
-        target.slider.value = target.HP;
-        Debug.Log(target+ "_slider.value:" + target.slider.value + "_HP:"+ target.HP);
+        target.slider.value = (float)target.HP / target.state.MAXHP; // HPの割合を設定
         if (target.HP <= 0)
         {
-            if (target.isCastle)
-            {
-                if (Tutorial != null) Tutorial.CharacterDefeated(target);
-                Debug.Log(Team + " Win");
-            }
+            // 敵陣の城を破壊した場合は勝利
+            if (target.isCastle) main.WinOrLose(1);
             Destroy(target.gameObject);
             BGMController.instance.UnregisterCharacter(target);
-
         }
-        if (HP <= 0 && isCastle)
-        {
-            if (Tutorial != null) Tutorial.CharacterDefeated(target);
-            Debug.Log(Team + " Lose");
-        }
+        // 自陣の城が破壊された場合は敗北
+        if (HP <= 0 && isCastle)main.WinOrLose(2);
     }
+    //アイテムでダメージを受けた場合
     public void ItemDamage(Character target, float damage)
     {
         target.HP -= Mathf.Max(0, (int)damage - state.Defense);
-        target.slider.value = HP;
+        target.slider.value = (float)target.HP / target.state.MAXHP;
         if (target.HP <= 0)
         {
-            if (target.isCastle) main.WinOrLose(true);
+            if (target.isCastle) main.WinOrLose(1);
             Destroy(target.gameObject);
             BGMController.instance.UnregisterCharacter(target);
         }
-        if (HP <= 0 && isCastle) main.WinOrLose(false);
+        if (HP <= 0 && isCastle) main.WinOrLose(2);
     }
     void OnDrawGizmos()
     {

@@ -1,24 +1,22 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using System;
+using System.Linq;
 
 public class Main : MonoBehaviour
 {
-    // タイマーの初期値を設定
     float startTimer = 3f, gameTimer = 120f;
     Character[] characters;
-    public GameObject resultPanel, winImage, loseImage, countDownPanel, gameTimePanel;
-    public TextMeshProUGUI startText, timerText;
+    public GameObject resultPanel, winImage, loseImage, DrawImage, countDownPanel, gameTimePanel;
+    TextMeshProUGUI startText, timerText;
+    [HideInInspector]public bool GameStop;
 
     void Awake()
     {
-        // テキストコンポーネントを取得
+        GameStop = true;
         startText = countDownPanel.GetComponentInChildren<TextMeshProUGUI>();
         timerText = gameTimePanel.GetComponentInChildren<TextMeshProUGUI>();
-
         // GameManagerメソッドを非同期で開始
         GameManager().Forget();
     }
@@ -32,7 +30,7 @@ public class Main : MonoBehaviour
     // キャラクターの移動を制御
     public void SetCharacterMovement(bool canMove)
     {
-        foreach (Character character in characters)character.MoveStop = !canMove;
+        foreach (Character character in characters)character.MoveStop = !canMove;  
     }
 
     // ゲーム管理メソッド
@@ -48,7 +46,8 @@ public class Main : MonoBehaviour
         }
         SetCharacterMovement(true);  // キャラクターの移動を開始
         countDownPanel.SetActive(false);
-
+        GameStop = false;
+        BGMController.instance.SetBGMPartActive(0, true);
         // ゲームタイマー
         while (gameTimer > 0)
         {
@@ -58,14 +57,26 @@ public class Main : MonoBehaviour
             await UniTask.Yield();
         }
         SetCharacterMovement(false);  // キャラクターの移動を停止
+        WinOrLose(0);
     }
-
     // 勝敗判定メソッド
-    public void WinOrLose(bool defeatResult)
+    public void WinOrLose(int defeatResult)
     {
+        GameStop = true;
         SetCharacterMovement(false);
         resultPanel.SetActive(true);
-        if (defeatResult) winImage.SetActive(true);
-        else loseImage.SetActive(true);
+
+        // 勝利/敗北/引き分けの表示
+        if (defeatResult == 1) winImage.SetActive(true);
+        else if (defeatResult == 2) loseImage.SetActive(true);
+        else
+        {
+            // 自チームの城と敵チームの城のHPを比較
+            var redCastle = characters.FirstOrDefault(c => c.isCastle && c.Team == TeamType.Red);
+            var blueCastle = characters.FirstOrDefault(c => c.isCastle && c.Team == TeamType.Blue);
+            if (blueCastle.HP > redCastle.HP) winImage.SetActive(true);
+            else if (blueCastle.HP < redCastle.HP) loseImage.SetActive(true);
+            else DrawImage.SetActive(true);
+        }
     }
 }

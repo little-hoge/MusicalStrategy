@@ -7,8 +7,10 @@ public class BGMController : MonoBehaviour
     public AudioSource[] bgmParts; // 曲パートのオーディオソース
     private List<Character> registeredCharacters = new List<Character>();    
     TutorialManager tutorialManager;
+    Main main;
     void Awake()
     {
+        main = FindObjectOfType<Main>();
         tutorialManager = FindObjectOfType<TutorialManager>();
         if (instance == null)
         {
@@ -49,6 +51,6 @@ public class BGMController : MonoBehaviour
     // 再生＆停止
     public void SetBGMPartActive(int index, bool isActive)
     {
-        bgmParts[index].volume = isActive ? 0.5f : 0f;
+       if(!main.GameStop) bgmParts[index].volume = isActive ? 0.5f : 0f;
     }
 }

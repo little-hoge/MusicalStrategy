@@ -26,7 +26,7 @@ MonoBehaviour:
   - MAXHP: 200
     Power: 20
     Defense: 0
-    Speed: 12
+    Speed: 3
     Range: 5
     attackAngle: 0
     projectileSpeed: 0
@@ -36,17 +36,17 @@ MonoBehaviour:
   - MAXHP: 100
     Power: 10
     Defense: 0
-    Speed: 10
-    Range: 10
+    Speed: 2
+    Range: 15
     attackAngle: 0
-    projectileSpeed: 10
+    projectileSpeed: 50
     CharaCost: 3
     BGMPartIndex: 2
     AttackDelay: 2
   - MAXHP: 200
     Power: 20
     Defense: 1
-    Speed: 10
+    Speed: 2
     Range: 5
     attackAngle: 45
     projectileSpeed: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
   - MAXHP: 350
     Power: 10
     Defense: 1
-    Speed: 10
+    Speed: 2
     Range: 5
     attackAngle: 0
     projectileSpeed: 0
@@ -66,7 +66,7 @@ MonoBehaviour:
   - MAXHP: 20
     Power: 5
     Defense: 0
-    Speed: 15
+    Speed: 3
     Range: 5
     attackAngle: 0
     projectileSpeed: 0

@@ -8,6 +8,7 @@ public class MusicalCharacters : ScriptableObject
 }
 
 [System.Serializable]
+
 public class StatesEntity
 {
     public int MAXHP,Power,Defense,Speed,Range,attackAngle, projectileSpeed, CharaCost, BGMPartIndex;
