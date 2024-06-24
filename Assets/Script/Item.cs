@@ -17,15 +17,11 @@ public class Item : MonoBehaviour
       obj.CompareTag("RedTeam") ? TeamType.Red :
       obj.CompareTag("BlueTeam") ? TeamType.Blue :
       TeamType.None;
-
-    void OnEnable()
-    {
-        PaintSpeed = activeTimer;
-        attackCollider = this.GetComponent<SphereCollider>();
-        Team = MyTeam(gameObject);
-    }
     void Start()
     {
+        PaintSpeed = activeTimer;
+        attackCollider = this.GetComponentInChildren<SphereCollider>();
+        Team = MyTeam(gameObject);
         SetSliderColor();
         PerformAttack().Forget();
     }
@@ -36,8 +32,6 @@ public class Item : MonoBehaviour
         if (!ColorUtility.TryParseHtmlString("#FF727A", out redTeamColor)) Debug.LogError("レッドチームのカラーの解析に失敗しました");
         FillImage.color = Team == TeamType.Blue ? redTeamColor : blueTeamColor;
     }
-    //オブジェクト有効時
-
     async UniTaskVoid PerformAttack()
     {
         // タイマーが終了するまで処理する
@@ -62,7 +56,6 @@ public class Item : MonoBehaviour
             if (target != null)
             {
                 TeamType enemyTeam = MyTeam(target.gameObject);
-                // 敵であり、かつ味方でない場合にのみダメージを与える
                 if (enemyTeam != Team) target.ItemDamage(target, damage);
             }
         }
